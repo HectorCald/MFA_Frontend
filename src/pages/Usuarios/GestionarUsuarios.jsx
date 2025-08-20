@@ -15,6 +15,8 @@ import Lista from "../../components/common/Lista";
 import InputContraseña from "../../components/common/InputContraseña";
 import FiltroFechas from "../../components/common/FiltroFechas";
 import Instruccion from "../../components/common/Instruccion";
+import Loader from "../../components/common/Loader";
+
 
 import CountryService from '../../services/countryService';
 import CityService from '../../services/cityService';
@@ -39,6 +41,8 @@ let tituloExito = "";
 let mensajeExito = "";
 let tituloInfo = "";
 let mensajeInfo = "";
+
+let showLoaderText = "";
 
 function GestionarUsuarios() {
     const navigate = useNavigate();
@@ -120,9 +124,10 @@ function GestionarUsuarios() {
     useEffect(() => {
         const loadUsers = async () => {
             try {
+                setShowLoader(true);
+                showLoaderText = "Cargando usuarios...";
                 setLoadingUsers(true);
                 setErrorUsers(null);
-
                 const usersData = await UserService.getAllUsers();
                 setUsers(usersData || []);
 
@@ -132,6 +137,7 @@ function GestionarUsuarios() {
                 setUsers([]);
             } finally {
                 setLoadingUsers(false);
+                setShowLoader(false);
             }
         };
 
@@ -632,6 +638,8 @@ function GestionarUsuarios() {
 
     const [showInfo, setShowInfo] = useState(false); // Estado para cada InfoBoton individual
 
+    const [showLoader, setShowLoader] = useState(false);
+
 
 
 
@@ -725,6 +733,7 @@ function GestionarUsuarios() {
 
     return (
         <div className={styles.container}>
+            <Loader text={showLoaderText} show={showLoader} />
             <Nav />
             <Fondo />
             <div className={styles.content}>

@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './Loader.module.css';
 
-const Loader = ({ size = 'medium', color = '#007bff', text = 'Cargando...' }) => {
+const Loader = ({ size = 'medium', color = '#007bff', text = 'Cargando...', show = true }) => {
     return (
-        <div className={styles.loaderContainer}>
+        <div className={`${styles.loaderContainer} ${show ? styles.show : styles.hide}`}>
             <div className={`${styles.loader} ${styles[size]}`}>
                 {[...Array(5)].map((_, index) => (
                     <div
