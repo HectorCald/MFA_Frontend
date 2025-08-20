@@ -1,4 +1,4 @@
-import fondo from "../../assets/Fondo.png"
+import fondo from "../../assets/fondo.png"
 import styles from "./fondo.module.css"
 function Fondo(){
     return (
