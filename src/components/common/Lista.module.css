@@ -1,0 +1,30 @@
+.listaContainer {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+}
+
+.listaTitulo {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    padding-bottom: 8px;
+}
+
+.listaOpciones {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-weight: 600;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.listaOpcion {
+    background: white;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    color: #495057;
+    line-height: 1.5;
+}

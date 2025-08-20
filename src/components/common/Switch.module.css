@@ -1,0 +1,100 @@
+.switchContainer {
+    display: inline-flex;
+    align-items: center;
+}
+
+.switch {
+    position: relative;
+    border: none;
+    background: #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.switch:hover:not(.disabled) {
+    background: #b3b3b3;
+}
+
+.switch.checked {
+    background: #4CAF50;
+}
+
+.switch.checked:hover:not(.disabled) {
+    background: #45a049;
+}
+
+.switch.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch.checked .slider {
+    left: 50%;
+}
+
+/* Tamaños */
+.small {
+    width: 32px;
+    height: 16px;
+}
+
+.medium {
+    width: 48px;
+    height: 24px;
+}
+
+.large {
+    width: 64px;
+    height: 32px;
+}
+
+.small .slider {
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+}
+
+.medium .slider {
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+}
+
+.large .slider {
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+}
+
+/* Estilos para las etiquetas de texto */
+.label {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 8px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.trueLabel {
+    color: #4CAF50;
+}
+
+.falseLabel {
+    color: #666;
+}
+
+.hidden {
+    opacity: 0.3;
+    transform: scale(0.9);
+}

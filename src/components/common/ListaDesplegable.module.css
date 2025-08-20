@@ -1,0 +1,64 @@
+.container {
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.header:hover {
+    background: #e9ecef;
+}
+
+.titulo {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.icon {
+    font-size: 14px;
+    color: #666;
+    transition: transform 0.2s ease;
+}
+
+.content {
+    max-height: 0;
+    transition: max-height 0.3s ease-in-out;
+    background: white;
+    overflow: hidden;
+}
+
+.content.expanded {
+    max-height: none;
+}
+
+/* Estilos para el contenido interno */
+.content > div {
+    padding: 20px;
+}
+
+/* Animación para el icono */
+.header:hover .icon {
+    color: #333;
+}

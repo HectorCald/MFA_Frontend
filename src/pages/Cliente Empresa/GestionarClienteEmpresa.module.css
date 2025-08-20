@@ -1,0 +1,107 @@
+.container {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 50px;
+    z-index: 1;
+}
+
+.content {
+    position: relative;
+    width: 95%;
+    height: 85vh;
+    padding: 40px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.61);
+    position: relative;
+    flex-direction: column;
+}
+.title{
+    font-size: 25px;
+    font-weight: 600;
+}
+.logo{
+    width: auto;
+    height: 40px;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+
+.searchContainer{
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 50px;
+    margin-top: 30px;
+}
+.tableContainer{
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    padding-inline: 50px;
+}
+
+.loading, .error {
+    width: 100%;
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.loading {
+    color: #007bff;
+}
+
+.error {
+    color: #dc3545;
+}
+
+.headerContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.headerContainer .title {
+    margin: 0;
+    flex: 1;
+}
+
+/* Estilos para la información del tipo de pago */
+.paymentInfoContainer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+    margin-left: 50px;
+}
+
+.paymentLabel {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+

@@ -1,0 +1,228 @@
+.filtroContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.botonFiltro {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #333;
+    min-width: 180px;
+}
+
+.botonFiltro:hover {
+    border-color: #3498db;
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+}
+
+.icono {
+    color: #3498db;
+    font-size: 16px;
+}
+
+.textoBoton {
+    flex: 1;
+    text-align: left;
+}
+
+.calendarioContainer {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    min-width: 300px;
+    margin-top: 8px;
+}
+
+.calendarioHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background:none;
+    border-radius: 8px 8px 0 0;
+    margin: -20px -20px 20px -20px;
+}
+
+.calendarioHeader h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.botonCerrar {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+
+.calendariosWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.calendarioItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.calendarioItem label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin: 0;
+}
+
+.inputFecha {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.inputFecha:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.botonesAccion {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.botonLimpiar {
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+}
+
+.botonLimpiar:hover {
+    background: #e9ecef;
+}
+
+.botonAplicar {
+    padding: 8px 16px;
+    background: #3498db;
+    border: 1px solid #3498db;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+}
+
+.botonAplicar:hover {
+    background: #2980b9;
+}
+
+/* Estilos para el calendario visual */
+:global(.react-datepicker) {
+    border: none!important;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    border-radius: 8px !important;
+    font-family: inherit !important;
+}
+
+:global(.react-datepicker__header) {
+    background-color: #0099ff !important;
+    border-bottom: 2px solid #3498db !important;
+    border-radius: 6px 6px 0 0 !important;
+}
+
+:global(.react-datepicker__current-month) {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+:global(.react-datepicker__day-name) {
+    color: white !important;
+    font-weight: 500 !important;
+}
+
+:global(.react-datepicker__day) {
+    color: #333 !important;
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+}
+
+:global(.react-datepicker__day:hover) {
+    background-color: #e3f2fd !important;
+    color: #1976d2 !important;
+}
+
+:global(.react-datepicker__day--selected) {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+:global(.react-datepicker__day--keyboard-selected) {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+:global(.react-datepicker__day--in-range) {
+    background-color: #e3f2fd !important;
+    color: #1976d2 !important;
+}
+
+:global(.react-datepicker__day--in-selecting-range) {
+    background-color: #e3f2fd !important;
+    color: #1976d2 !important;
+}
+
+:global(.react-datepicker__day--range-start) {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+:global(.react-datepicker__day--range-end) {
+    background-color: #3498db !important;
+    color: white !important;
+}
+
+:global(.react-datepicker__navigation) {
+    border: none !important;
+}
+
+:global(.react-datepicker__navigation-icon::before) {
+    border-color: white !important;
+}
+
+:global(.react-datepicker__month-container) {
+    background-color: white !important;
+    border-radius: 6px !important;
+}

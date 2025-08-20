@@ -1,0 +1,89 @@
+.actionButtons {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.actionButton {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 15px;
+    color: white;
+    background: none;
+    border: 1px solid #e0e0e0;
+    z-index: 1;
+
+    .icon{
+        font-size: 17px !important;
+    }
+}
+
+.actionButton:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    z-index: 1;
+}
+
+.infoButton {
+    color: #4b4b4b;
+}
+
+.infoButton:hover {
+    color: #7b7b7b;
+}
+
+.editButton {
+    color: #0467a9;
+}
+
+.editButton:hover {
+    color: #0462a9;
+}
+
+.deleteButton {
+    color: #dc3545;
+}
+
+.deleteButton:hover {
+    color: #c82333;
+}
+
+.buildButton {
+    color: #28a745;
+}
+
+.buildButton:hover {
+    color: #218838;
+}
+
+.configButton {
+    color: #6c757d;
+}
+
+.configButton:hover {
+    color: #5a6268;
+}
+.statusButton {
+    color: #6c757d;
+}
+
+.statusButton:hover {
+    color: #5a6268;
+}
+.passworButton {
+    color: #28a745;
+}
+
+.passworButton:hover {
+    color: #218838;
+}

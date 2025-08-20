@@ -1,0 +1,113 @@
+.table{
+    width: 100%;
+    height: auto;
+    height: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    overflow: auto;
+}
+
+/* Contenedor principal de la tabla con scroll */
+.tableWrapper {
+    width: 100%;
+    height: 100%;
+    max-height: 50vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    position: relative;
+}
+
+/* Estilos personalizados para el scroll */
+.tableWrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #e5e7eb 0%, #d1d5db 100%);
+    border-radius: 10px;
+    border: 1px solid #9ca3af;
+    min-height: 40px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d1d5db 0%, #9ca3af 100%);
+    box-shadow: 0 2px 8px rgba(156, 163, 175, 0.3);
+}
+
+.tableWrapper::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Para Firefox */
+.tableWrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+}
+
+/* Tabla principal */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: none;
+    border-radius: 0;
+}
+
+/* Encabezados fijos */
+.tableHeader {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #e8fcfd;
+}
+
+/* Cuerpo de la tabla con scroll */
+.tableBody {
+    max-height: calc(48vh - 50px);
+    overflow-y: auto;
+}
+
+.table th{
+    background-color: #eeeeee;
+    color: #4e4e4e;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 5px 15px;
+    border-right: 3px solid white;
+    white-space: nowrap;
+}
+
+.table td{
+    border-bottom: 1px solid #e0e0e0;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #4e4e4e;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tableRow {
+    transition: background-color 0.3s ease;
+}
+
+.tableRow:hover td {
+    background-color: #e6f1fd;
+}
+
+.noData {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+
+

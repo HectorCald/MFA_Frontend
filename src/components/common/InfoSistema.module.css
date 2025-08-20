@@ -1,0 +1,30 @@
+.infoSistemaContainer {
+    background: white;
+    border-radius: 15px;
+    padding: 0;
+    min-width: 300px;
+    max-width: 300px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+
+    .infoSistemaTitle {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary-color);
+        width: 100%;
+        margin: 0;
+    }
+    
+    .infoSistemaDetails {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 10px;
+        color: gray;
+        font-weight: 400;
+    } 
+}
+

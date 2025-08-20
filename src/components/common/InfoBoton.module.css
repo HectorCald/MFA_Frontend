@@ -1,0 +1,40 @@
+.infoButton{
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: gray !important;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.infoContainer{
+    position: absolute;
+    background-color: white;
+    font-size: 12px;
+    padding: 15px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    color: gray;
+    width: 200px;
+    transition: all 0.3s ease-in-out;
+    z-index: 99999999;
+
+    p{
+        line-height: 1.2;
+        text-align: left;
+    }
+}
+
+.infoContainer.left{
+    right: 15px;
+    bottom: 100%;
+    border-radius: 15px 15px 0px 15px;
+}
+
+.infoContainer.right{
+    left: 15px;
+    bottom: 100%;
+    border-radius: 15px 15px 15px 0px;
+}

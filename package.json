@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "axios": "^1.10.0",
+    "boxicons-react": "^0.1.1",
+    "classnames": "^2.5.1",
+    "countries-list": "^3.1.1",
+    "date-fns": "^4.1.0",
+    "react-datepicker": "^8.4.0",
+    "react-hook-form": "^7.60.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.7.0",
+    "react-toastify": "^11.0.5",
+    "yup": "^1.6.1",
+    "zustand": "^5.0.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite": "^6.3.5"
+  }
+}

@@ -1,0 +1,29 @@
+@import 'boxicons/css/boxicons.min.css';
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    --primary-color: #041ea9;
+    --secondary-color: #ec1d23;
+    --tertiary-color: #fbdd00;
+    --quaternary-color: #00f801;
+    --quinary-color: #790f33;
+
+    --error: #fc3737;
+    --success: #4CAF50;
+
+    --text-detalle: 13px;
+    --text-subtitulo: 15px;
+    --text-titulo: 16px;
+    --text-superior: 17px;
+    --text-xl: 18px;
+    --text-2xl: 20px;
+    --text-3xl: 24px;
+    --text-4xl: 26px;
+    --text-5xl: 28px;
+}

@@ -1,0 +1,147 @@
+.inputContainer {
+    width: 100%;
+    max-width: 300px;
+    min-width: 140px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+}
+
+.inputInfo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.inputInfo label {
+    font-size: 14px;
+    font-weight: 500;
+    color: gray;
+}
+
+.inputInfo label span {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.inputWrapper input {
+    min-width: 100% !important;
+    height: 48px;
+    border: 2px solid #e1e5e9;
+    border-radius: 15px;
+    padding: 0 15px;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.inputWrapper input:focus {
+    border: 2px solid var(--primary-color);
+}
+
+.inputWrapper input:read-only {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.inputWrapper input:read-only:focus {
+    border-color: #ddd;
+    box-shadow: none;
+}
+
+/* Botón de generar contraseña */
+.generateButton {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+    z-index: 2;
+}
+
+.generateButton:hover {
+    background-color: #f8f9fa;
+}
+
+.generateButton:active {
+    background-color: #e9ecef;
+}
+
+/* Botón de mostrar/ocultar contraseña */
+.visibilityButton {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    color: #6c757d;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg{
+        width: 15px;
+        height: 15px;
+    }
+}
+
+.visibilityButton:hover {
+    color: #495057;
+    background-color: #f8f9fa;
+}
+
+.visibilityButton:active {
+    background-color: #e9ecef;
+}
+
+/* Estados de error */
+.inputWrapper input.error {
+    border-color: #e74c3c;
+}
+
+.inputWrapper input.error:focus {
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .inputWrapper input {
+        padding: 10px 45px 10px 10px;
+        font-size: 13px;
+    }
+
+    .generateButton {
+        right: 35px;
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .visibilityButton {
+        padding: 6px;
+    }
+}

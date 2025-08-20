@@ -1,0 +1,121 @@
+/* Contenedor principal */
+.checkboxContainer {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 300px;
+    background-color: rgb(235, 248, 255);
+    padding: 10px 15px;
+    border-radius: 15px;
+}
+
+.checkboxWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Label del checkbox */
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+/* Input oculto */
+.checkboxInput {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Checkmark redondeado */
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    background-color: white;
+    position: relative;
+    display: inline-block;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Estado checked */
+.checkboxInput:checked ~ .checkmark {
+    background-color: #66ff00;
+    border-color: #66ff00;
+}
+
+/* Check icon centrado y del tamaño correcto */
+.checkIcon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width:15px;
+    height: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    color: white;
+}
+
+.checkboxInput:checked ~ .checkmark .checkIcon {
+    opacity: 1;
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
+}
+
+/* Texto del label */
+.labelText {
+    font-size: 14px;
+    color: #5f5e5e;
+    font-weight: 500;
+}
+
+.required {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+/* Estados */
+.disabled .checkmark {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.disabled .labelText {
+    color: #999;
+    cursor: not-allowed;
+}
+
+.readOnly .checkmark {
+    opacity: 0.7;
+}
+
+.readOnly .labelText {
+    color: #666;
+}
+
+/* Hover effects */
+.checkboxLabel:hover:not(.disabled) .checkmark {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Focus styles */
+.checkboxInput:focus ~ .checkmark {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}

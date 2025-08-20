@@ -1,0 +1,189 @@
+.inputNumeroContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+}
+
+.inputNumeroContainer label {
+    font-size: 14px;
+    font-weight: 500;
+    color: gray;
+}
+
+.required {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.inputWrapper {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    overflow: visible;
+    transition: all 0.3s ease;
+    position: relative;
+    border-radius: 15px !important;
+}
+
+.inputWrapper:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+/* Select de país */
+.countrySelect {
+    position: relative;
+    min-width: 60px;
+    background: #f8f9fa;
+    border-right: 1px solid #e1e5e9;
+    border-radius: 15px 0 0 15px;
+}
+
+.countryDisplay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-height: 45px;
+}
+
+.countryDisplay:hover {
+    background-color: #e9ecef;
+    border-radius: 15px 0 0 15px;
+}
+
+.flagContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.flagEmoji {
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.countryArrow {
+    color: #666;
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.countryArrow.rotated {
+    transform: rotate(180deg);
+}
+
+/* Dropdown de países */
+.countryDropdown {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 0;
+    min-width: 250px;
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.countryOption {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f1f3f4;
+    white-space: nowrap;
+}
+
+.countryOption:hover {
+    background-color: #f8f9fa;
+}
+
+.countryOption.selected {
+    background-color: var(--primary-color);
+    color: white;
+
+    .dialCode {
+        color: white;
+    }
+}
+
+.countryOption:last-child {
+    border-bottom: none;
+}
+
+.countryName {
+    flex: 1;
+    font-size: 14px;
+    min-width: 0;
+}
+
+.dialCode {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Input de teléfono */
+.phoneInput {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+    background: white;
+    border-radius: 0 15px 15px 0 !important;
+    min-width: 140px;
+    max-width: 300px;
+}
+
+/* Scrollbar personalizado */
+.countryDropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.countryDropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.countryDropdown::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.countryDropdown::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+

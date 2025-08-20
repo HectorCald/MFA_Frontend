@@ -1,0 +1,107 @@
+.buscarPersonaContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    top: 0;
+    left: 0;
+}
+
+.buscarPersona {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    background-color: white;
+    border-radius: 15px;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 15px;
+    padding: 50px;
+}
+
+.closeButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    color: gray;
+    font-size: 20px;
+}
+
+.closeButton:hover {
+    color: #333;
+}
+
+.buscarPersonaTitle {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.informacionContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+.errorMessage {
+    background-color: #fee;
+    color: #c33;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #fcc;
+    width: 100%;
+    text-align: center;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+    color: #666;
+    font-size: 16px;
+}
+
+.noResults {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+    color: #666;
+    font-size: 16px;
+}
+
+.selectButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.selectButton:hover {
+    background-color: #0056b3;
+}
+
+.selectButton:active {
+    background-color: #004085;
+}
