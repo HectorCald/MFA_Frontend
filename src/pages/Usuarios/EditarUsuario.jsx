@@ -523,7 +523,7 @@ function EditarUsuario() {
             console.log('👥 ROLES ASIGNADOS (Paso 3):', rolesAsignados);
             console.log('=== ACTUALIZANDO USUARIO ===');
             try {
-                const loggedInUserId = localStorage.getItem('user').id || '00000000-0000-0000-0000-000000000001'; // fallback a UUID por defecto
+                const loggedInUserId = localStorage.getItem('user').id; // fallback a UUID por defecto
                 const userDataForUpdate = {
                     nombreUsuario: formValues.nombreUsuario,
                     apellidoUsuario: formValues.apellidoUsuario,
