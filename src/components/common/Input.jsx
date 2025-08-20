@@ -38,5 +38,5 @@ function Input(props) {
         </div>
     )
 }
-//holas
+
 export default Input;
