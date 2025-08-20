@@ -1,5 +1,6 @@
 import Fondo from "../components/common/Fondo";
 import Nav from "../components/ui/nav";
+
 function Home(){
     return (
         <div className="home-container">
@@ -8,4 +9,5 @@ function Home(){
         </div>
     )
 }
+
 export default Home
