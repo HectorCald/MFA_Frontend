@@ -14,6 +14,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const togglePasswordVisibility = () => {
@@ -24,6 +25,7 @@ export default function Login() {
         // Limpiar errores anteriores
         setEmailError(false);
         setPasswordError(false);
+        setLoading(true);
 
         try {
             const data = await AuthService.login({ email, password });
@@ -43,6 +45,8 @@ export default function Login() {
             setEmailError(true);
             setPasswordError(true);
             // NO navegar si hay error - la página se queda en login
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -67,6 +71,7 @@ export default function Login() {
 
     return (
         <div className="login-page">
+            {loading && <div className="overlay"></div>}
             <Fondo />
             <img className="logotipo" src={logo} alt="Logo" />
             <div className="login-container">
@@ -108,7 +113,23 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <button className="btn-login" type="submit">Iniciar sesión</button>
+                    <button 
+                        className={`btn-login ${loading ? 'loading' : ''}`} 
+                        type="submit"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <div className="loading-dots">
+                                <span className="dot"></span>
+                                <span className="dot"></span>
+                                <span className="dot"></span>
+                                <span className="dot"></span>
+                                <span className="dot"></span>
+                            </div>
+                        ) : (
+                            'Iniciar sesión'
+                        )}
+                    </button>
                     <div className="google-container">
                         <img src={googleIcon} alt="" />
                         <button className="btn-google">Continuar con Google</button>
