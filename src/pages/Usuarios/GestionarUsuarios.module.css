@@ -108,37 +108,37 @@
 }
 
 /* Estado Activo */
-.statusActivo {
+.statusactivo {
     background-color: #00ff3c18;
     color: var(--success);
 }
 
-.statusActivo .statusDot {
+.statusactivo .statusDot {
     background-color: var(--success);
 }
 
 /* Estado Inactivo */
-.statusInactivo {
+.statusinactivo {
     background-color: #ff000018;
     color: red;
 }
 
-.statusInactivo .statusDot {
+.statusinactivo .statusDot {
     background-color: red;
 }
 
 /* Estado Bloqueado */
-.statusBloqueado {
+.statusbloqueado {
     background-color: #fff3cd;
     color: #856404;
     cursor: pointer;
 }
 
-.statusBloqueado .statusDot {
+.statusbloqueado .statusDot {
     background-color: #856404;
 }
 
-.statusBloqueado:hover {
+.statusbloqueado:hover {
     background-color: #ffeaa7;
 }
 

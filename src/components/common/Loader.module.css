@@ -1,0 +1,128 @@
+.loaderContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+}
+
+.loader {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 60px;
+}
+
+.loaderText {
+    font-size: 24px;
+    color: white;
+    margin: 0;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: none !important;
+    border-radius: 10px;
+}
+
+.pillar {
+    width: 12px;
+    height: 40px;
+    background: white;
+    border-radius: 6px;
+    animation: wave 1.2s ease-in-out infinite;
+    animation-delay: var(--delay);
+    transform-origin: bottom;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Tamaños del loader */
+.small .pillar {
+    width: 8px;
+    gap: 6px;
+}
+
+.medium .pillar {
+    width: 12px;
+    gap: 8px;
+}
+
+.large .pillar {
+    width: 16px;
+    gap: 10px;
+}
+
+/* Animación de ola */
+@keyframes wave {
+    0%, 40%, 100% {
+        transform: scaleY(0.4);
+        opacity: 0.7;
+    }
+    20% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .loader {
+        gap: 6px;
+    }
+    
+    .pillar {
+        width: 10px;
+    }
+    
+    .small .pillar {
+        width: 6px;
+        gap: 4px;
+    }
+    
+    .large .pillar {
+        width: 14px;
+        gap: 8px;
+    }
+    
+    .loaderText {
+        font-size: 18px;
+        padding: 15px 30px;
+    }
+}
+
+
+@keyframes fadeOut {
+    from {
+        display: flex;
+        opacity: 1;
+    }
+    to {
+        display: none;
+        opacity: 0;
+    }
+}
+@keyframes fadeIn {
+    from {
+        display: none;
+        opacity: 0;
+    }
+    to {
+        display: flex;
+        opacity: 1;
+    }
+}
+.show {
+    display: flex;
+    animation: fadeIn 0.5s ease-in;
+}
+.hide {
+    display: none;
+    animation: fadeOut 0.5s ease-out;
+}

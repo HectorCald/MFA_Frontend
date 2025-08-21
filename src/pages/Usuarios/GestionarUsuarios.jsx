@@ -15,6 +15,8 @@ import Lista from "../../components/common/Lista";
 import InputContraseña from "../../components/common/InputContraseña";
 import FiltroFechas from "../../components/common/FiltroFechas";
 import Instruccion from "../../components/common/Instruccion";
+import Loader from "../../components/common/Loader";
+import TableSkeleton from "../../components/ui/TableSkeleton";
 
 import CountryService from '../../services/countryService';
 import CityService from '../../services/cityService';
@@ -22,7 +24,7 @@ import UserService from "../../services/userService";
 import AuditLogService from "../../services/auditLogService";
 import InfoBoton from "../../components/common/InfoBoton";
 
-
+// Motivos de desactivación
 const motivosDesactivar = [
     "Cambio de cargo",
     "Cambio de empresa",
@@ -35,27 +37,55 @@ const motivosDesactivar = [
     "Otro"
 ]
 
+// Estados de modales de info y exito
 let tituloExito = "";
 let mensajeExito = "";
 let tituloInfo = "";
 let mensajeInfo = "";
+let showLoaderText = "";
 
+// Componente principal
 function GestionarUsuarios() {
+    //------------------------------------------------------------------------------------
+    // Estados de modales de info y exito
+    const [showModalInfo, setShowModalInfo] = useState(false);
+    const [showModalExito, setShowModalExito] = useState(false);
+
+    // Estados de info
+    const [showInfo, setShowInfo] = useState(false);
+
+    // Estados de carga y botones
+    const [loading, setLoading] = useState(true);
+    const [showLoader, setShowLoader] = useState(false);
+    const [buttonLoading, setButtonLoading] = useState(false);
     const navigate = useNavigate();
+
+
+
+
+    
+    //------------------------------------------------------------------------------------
+    // Búsqueda
     const [searchTerm, setSearchTerm] = useState("");
     const [searchBlocks, setSearchBlocks] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const [tableDataAuditoria, setTableDataAuditoria] = useState([]);
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+    };
+    const handleSearchBlocks = (searchBlocks) => {
+        setSearchBlocks(searchBlocks);
+    };
+
+
+
 
 
     //------------------------------------------------------------------------------------
-    // Función para cargar los países
+    // Cargar países
     const [countries, setCountries] = useState([]);
     const [loadingCountries, setLoadingCountries] = useState(true);
     const [errorCountries, setErrorCountries] = useState(null);
     const [countryOptions, setCountryOptions] = useState([]);
-
-    // Cargar países al montar el componente
     useEffect(() => {
         const loadCountries = async () => {
             try {
@@ -82,8 +112,6 @@ function GestionarUsuarios() {
             } catch (error) {
                 console.error('❌ Error al cargar países:', error);
                 setErrorCountries(error.message);
-
-                // Opciones por defecto en caso de error
                 setCountryOptions([
                     { label: "Error al cargar países", value: "" },
                 ]);
@@ -95,12 +123,15 @@ function GestionarUsuarios() {
         loadCountries();
     }, []);
 
+
+
+
+
     //------------------------------------------------------------------------------------
-    // Función para cargar las ciudades
+    // Cargar ciudades
     const [cities, setCities] = useState([]);
     const [loadingCities, setLoadingCities] = useState(false);
     const [errorCities, setErrorCities] = useState(null);
-
     useEffect(() => {
         const loadCities = async () => {
             const citiesData = await CityService.getAllCities();
@@ -110,19 +141,19 @@ function GestionarUsuarios() {
     }, []);
 
 
+
+
+
     //------------------------------------------------------------------------------------
-    // Función para cargar los usuarios
+    // Cargar usuarios
     const [users, setUsers] = useState([]);
     const [loadingUsers, setLoadingUsers] = useState(true);
     const [errorUsers, setErrorUsers] = useState(null);
-
-    // Cargar usuarios al montar el componente
     useEffect(() => {
         const loadUsers = async () => {
             try {
                 setLoadingUsers(true);
                 setErrorUsers(null);
-
                 const usersData = await UserService.getAllUsers();
                 setUsers(usersData || []);
 
@@ -132,16 +163,89 @@ function GestionarUsuarios() {
                 setUsers([]);
             } finally {
                 setLoadingUsers(false);
+                setLoading(false);
             }
         };
-
         loadUsers();
     }, []);
+
+    // Tabla de usuarios
+    const tableRows = useMemo(() => {
+        return tableData.map((item, index) => [
+            index + 1, // Numeración secuencial 1, 2, 3...
+            item.nombre,
+            item.email,
+            item.rol,
+            <div
+                className={`${styles.statusColumn} ${styles[`status${item.estado}`]}`}
+                onClick={() => {
+                    if (item.estado === 'Inactivo') {
+                        setShowModalInfoDesactivo(true);
+                    }
+                }}
+            >
+                <span className={styles.statusDot}></span>
+                <span className={styles.statusText}>{item.estado.charAt(0).toUpperCase() + item.estado.slice(1)}</span>
+            </div>,
+            item.bloqueado,
+            item.pais,
+            item.ciudad,
+            <div className={styles.actionsContainer}>
+                <span className={styles.defaultText}>...</span>
+                <div className={styles.actionButtons}>
+                    <ActionButtons
+                        tipo="gestionUsuarios"
+                        onInfo={() => handleShowPerfilUsuario(item)}
+                        onEdit={() => navigate(`/gestionar-usuarios/editar-usuario/${item.id}`)}
+                        onDelete={() => confirmDelete(item)}
+                    />
+                </div>
+                <div className={styles.menuPuntos}>
+                    <MenuPuntos
+                        opciones={[
+                            {
+                                label: 'Auditoria',
+                                icono: <FaSearch />,
+                                onClick: () => handleOpenAuditoria(item)
+                            },
+                            {
+                                label: 'Cambiar contraseña',
+                                icono: <FaKey />,
+                                onClick: () => {
+                                    setUserToChangePassword(item);
+                                    setShowModalContraseña(true);
+                                }
+                            },
+                            {
+                                label: item.estado === 'Activo' ? 'Desactivar' : 'Activar',
+                                icono: item.estado === 'Activo' ? <FaToggleOff /> : <FaToggleOn />,
+                                onClick: () => {
+                                    if (item.estado === 'Activo') {
+                                        setUserToDesactivar(item);
+                                        setShowModalDesactivar(true);
+                                    } else {
+                                        setUserToActivar(item);
+                                        setShowModalActivar(true);
+                                    }
+                                }
+                            },
+                            {
+                                label: 'Desbloquear',
+                                icono: <FaUnlock />,
+                            }
+                        ]}
+                    />
+                </div>
+            </div>
+        ]);
+    }, [tableData]);
+
+
 
 
 
     //------------------------------------------------------------------------------------
-    // Función para filtrar usuarios basada en bloques de búsqueda
+    // Filtrar usuarios basada en bloques de búsqueda
     const filterUsersByBlocks = (users, blocks) => {
         if (blocks.length === 0) return users;
 
@@ -164,7 +268,7 @@ function GestionarUsuarios() {
                 name: `${user.first_name} ${user.last_name}`.toLowerCase(),
                 email: user.email?.toLowerCase() || '',
                 roles: user.roles && user.roles.length > 0 ? user.roles.map(role => role.role_name).join(', ').toLowerCase() : 'sin roles',
-                status: (user.user_is_active ? 'activo' : 'inactivo').toLowerCase(),
+                estado: (user.user_status || 'Sin estado').toLowerCase(),
                 country: userCountry ? (userCountry.name || userCountry.country_name || userCountry.nombre || userCountry.name_common || '').toLowerCase() : '',
                 city: userCity ? (userCity.name || userCity.city_name || userCity.nombre || userCity.name_common || '').toLowerCase() : ''
             };
@@ -177,10 +281,7 @@ function GestionarUsuarios() {
             });
         });
     };
-
-    // Filtrar usuarios basado en searchBlocks
     const filteredUsers = filterUsersByBlocks(users, searchBlocks);
-
     useEffect(() => {
         // Cargar usuarios reales en lugar de mock data
         if (users && users.length > 0 && countries.length > 0) {
@@ -205,7 +306,7 @@ function GestionarUsuarios() {
                     email: user.email,
                     dni: user.dni,
                     rol: user.roles && user.roles.length > 0 ? user.roles.map(role => role.role_name).join(', ') : 'Sin roles',
-                    estado: user.user_is_active ? 'Activo' : 'Inactivo',
+                    estado: (user.user_status || 'Sin estado').toLowerCase(),
                     bloqueado: user.blocked_until ? new Date(user.blocked_until).toLocaleDateString('es-ES') : '--',
                     pais: userCountry ? (userCountry.name || userCountry.country_name || userCountry.nombre || userCountry.name_common) : 'N/A',
                     ciudad: userCity ? (userCity.name || userCity.city_name || userCity.nombre || userCity.name_common) : 'N/A',
@@ -217,11 +318,14 @@ function GestionarUsuarios() {
 
             setTableData(formattedUsers);
         }
-    }, [filteredUsers, countries, cities]); // Se ejecuta cuando 'filteredUsers', 'countries' o 'cities' cambien
+    }, [filteredUsers, countries, cities]);
+
+
+
+
 
     //------------------------------------------------------------------------------------
-
-    // Modal de desactivar usuario
+    // Desactivar usuario
     const [showModalDesactivar, setShowModalDesactivar] = useState(false);
     const [userToDesactivar, setUserToDesactivar] = useState(null);
     const [errors, setErrors] = useState({
@@ -230,9 +334,9 @@ function GestionarUsuarios() {
     const [formValues, setFormValues] = useState({
         desactivarUsuario: ""
     });
-    // Función para desactivar usuario
     const handleDesactivar = async () => {
         if (!userToDesactivar) return;
+
         if (!formValues.desactivarUsuario || formValues.desactivarUsuario.trim() === '') {
             setErrors({
                 desactivarUsuario: "El motivo es requerido"
@@ -256,7 +360,7 @@ function GestionarUsuarios() {
 
             }, 3000);
         } else {
-            if(userToDesactivar.roles.some(role => role.role_name === 'Super Administrador')) {
+            if (userToDesactivar.roles.some(role => role.role_name === 'Super Administrador')) {
                 tituloInfo = "Información";
                 mensajeInfo = "El usuario Super Administrador no puede ser desactivado";
                 setShowModalInfo(true);
@@ -267,59 +371,71 @@ function GestionarUsuarios() {
             setErrors({
                 desactivarUsuario: ""
             });
-            await UserService.deactivateUser(userToDesactivar.id);
+            try {
+                setButtonLoading(true);
+                await UserService.deactivateUser(userToDesactivar.id);
 
+                setTableData(prevData =>
+                    prevData.map(user =>
+                        user.id === userToDesactivar.id
+                            ? { ...user, estado: 'Inactivo' }  // Cambiar estado a Inactivo
+                            : user
+                    )
+                );
+                tituloExito = "Exito";
+                mensajeExito = "El usuario ha sido desactivado correctamente";
+                setShowModalExito(true);
+                setShowModalDesactivar(false);
+                setUserToDesactivar(null);
+            } catch (error) {
+                console.error('Error al desactivar usuario:', error);
+            } finally {
+                setButtonLoading(false);
+            }
+        }
+    };
+
+
+
+
+
+    //------------------------------------------------------------------------------------
+    // Activar usuario
+    const [showModalActivar, setShowModalActivar] = useState(false);
+    const [userToActivar, setUserToActivar] = useState(null);
+    const handleActivar = async () => {
+        if (!userToActivar) return;
+        try {
+            setButtonLoading(true);
+            await UserService.activateUser(userToActivar.id);        // ✅ UNA SOLA LLAMADA
             setTableData(prevData =>
                 prevData.map(user =>
-                    user.id === userToDesactivar.id
-                        ? { ...user, estado: 'Inactivo' }  // Cambiar estado a Inactivo
+                    user.id === userToActivar.id
+                        ? { ...user, estado: 'Activo' }
                         : user
                 )
             );
             tituloExito = "Exito";
-            mensajeExito = "El usuario ha sido desactivado correctamente";
+            mensajeExito = "El usuario ha sido activado correctamente";
             setShowModalExito(true);
-            setShowModalDesactivar(false);
-            setUserToDesactivar(null);
-
+            // ❌ ELIMINAR: await UserService.activateUser(userToActivar.id); ← DUPLICADA
+            setShowModalActivar(false);
+            setUserToActivar(null);                                 // ✅ Corregir: userToActivar, no userToDelete
+            setFormValues({ activarUsuario: "" });
+            setErrors({ activarUsuario: "" });
+        } catch (error) {
+            console.error('Error al activar usuario:', error);
+        } finally {
+            setButtonLoading(false);
         }
     }
 
 
 
 
-    //------------------------------------------------------------------------------------
-    // Función para activar usuario
-
-    const [showModalActivar, setShowModalActivar] = useState(false);
-    const [userToActivar, setUserToActivar] = useState(null);
-
-    const handleActivar = async () => {
-        if (!userToActivar) return;
-        
-        await UserService.activateUser(userToActivar.id);        // ✅ UNA SOLA LLAMADA
-        setTableData(prevData =>
-            prevData.map(user =>
-                user.id === userToActivar.id
-                    ? { ...user, estado: 'Activo' }
-                    : user
-            )
-        );
-        tituloExito = "Exito";
-        mensajeExito = "El usuario ha sido activado correctamente";
-        setShowModalExito(true);
-        // ❌ ELIMINAR: await UserService.activateUser(userToActivar.id); ← DUPLICADA
-        setShowModalActivar(false);
-        setUserToActivar(null);                                 // ✅ Corregir: userToActivar, no userToDelete
-        setFormValues({ activarUsuario: "" });
-        setErrors({ activarUsuario: "" });
-    }
-
-
-
 
     //------------------------------------------------------------------------------------
-    // Modal de cambiar contraseña
+    // Cambiar contraseña
     const [showModalContraseña, setShowModalContraseña] = useState(false);
     const [userToChangePassword, setUserToChangePassword] = useState(null);
     const [formValuesContraseña, setFormValuesContraseña] = useState({
@@ -330,7 +446,6 @@ function GestionarUsuarios() {
         nuevaContraseña: "",
         confirmarContraseña: ""
     });
-    // Función para cambiar contraseña
     const handlePassword = async () => {
         if (!userToChangePassword) return;
         const inputElement = document.getElementById("nuevaContraseña");
@@ -397,7 +512,7 @@ function GestionarUsuarios() {
             });
             return;
         }
-        
+
         if (formValuesContraseña.nuevaContraseña === formValuesContraseña.confirmarContraseña) {
             try {
                 await UserService.updateUserPassword(userToChangePassword.id, formValuesContraseña.nuevaContraseña);
@@ -419,14 +534,17 @@ function GestionarUsuarios() {
         }
     };
 
-    //------------------------------------------------------------------------------------
 
-    // Modal de auditoría
+
+
+
+    //------------------------------------------------------------------------------------
+    // Auditoría
+    const [tableDataAuditoria, setTableDataAuditoria] = useState([]);
     const [showModalAuditoria, setShowModalAuditoria] = useState(false);
     const [userForAudit, setUserForAudit] = useState(null);
     const [loadingAudit, setLoadingAudit] = useState(false);
     const [originalAuditData, setOriginalAuditData] = useState([]); // Datos originales para restaurar
-    
     const handleSearchAuditoria = (value) => {
         setSearchTerm(value);
         if (value.trim() === "") {
@@ -444,7 +562,6 @@ function GestionarUsuarios() {
         );
         setTableDataAuditoria(filteredData);
     };
-    
     const handleSearchBlocksAuditoria = (searchBlocks) => {
         if (searchBlocks.length === 0) {
             // Restaurar todos los logs originales del usuario
@@ -466,24 +583,22 @@ function GestionarUsuarios() {
         });
         setTableDataAuditoria(filteredData);
     };
-
-    // Función para abrir auditoría de un usuario específico
     const handleOpenAuditoria = async (user) => {
         try {
             setLoadingAudit(true);
             setUserForAudit(user);
             setSearchTerm(""); // Limpiar búsqueda anterior
-            
+
             // Cargar audit logs reales del usuario
             const auditLogsResponse = await AuditLogService.getAuditLogsByPersonId(user.id);
-            
+
             if (auditLogsResponse.success && auditLogsResponse.data) {
                 // Formatear los datos para la tabla
                 const formattedAuditLogs = auditLogsResponse.data.map((log, index) => {
                     // Determinar si el evento fue hecho por el mismo usuario que está viendo la auditoría
                     const isSameUser = log.app_user_id === user.id || log.performed_by_id === user.id;
                     const isOwnAudit = log.app_user_id === user.id && log.performed_by_id === user.id;
-                    
+
                     let hechoPor;
                     if (isOwnAudit) {
                         hechoPor = "Mismo usuario";
@@ -493,7 +608,7 @@ function GestionarUsuarios() {
                     } else {
                         hechoPor = `${log.performer_first_name || ''} ${log.performer_last_name || ''}`.trim() || 'Usuario del sistema';
                     }
-                    
+
                     return {
                         numero: index + 1,
                         fecha: new Date(log.event_date_id).toLocaleDateString('es-ES', {
@@ -509,7 +624,7 @@ function GestionarUsuarios() {
                         detalleCambios: (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span>{log.event_details?.comment || 'Sin detalles'}</span>
-                                <InfoBoton 
+                                <InfoBoton
                                     info="hola"
                                     setShowInfo={setShowInfo}
                                     showInfo={showInfo}
@@ -520,14 +635,14 @@ function GestionarUsuarios() {
                         userRole: log.user_role || 'desconocido'
                     };
                 });
-                
+
                 setTableDataAuditoria(formattedAuditLogs);
                 setOriginalAuditData(formattedAuditLogs); // Guardar copia original
             } else {
                 setTableDataAuditoria([]);
                 setOriginalAuditData([]);
             }
-            
+
             setShowModalAuditoria(true);
         } catch (error) {
             console.error('Error al cargar audit logs:', error);
@@ -538,19 +653,32 @@ function GestionarUsuarios() {
             setLoadingAudit(false);
         }
     };
+    // Tabla de auditoría
+    const tableRowsAuditoria = useMemo(() => {
+        return tableDataAuditoria.map(item => [
+            item.numero,
+            item.fecha,
+            item.evento,
+            item.hechoPor,
+            item.tabla,
+            item.detalleCambios,
+        ]);
+    }, [tableDataAuditoria]);
+
+
+
+
 
 
     //------------------------------------------------------------------------------------
-    // Modal de eliminar usuario
+    // Eliminar usuario
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
-
     const handleDelete = async () => {
         if (!userToDelete) return;
 
-        if(userToDelete.roles.some(role => role.role_name === 'Super Administrador')) {
-            tituloInfo = "Información";
-            mensajeInfo = "El usuario Super Administrador no puede ser eliminado";
+        if (userToDelete.roles.some(role => role.role_name === 'Super Administrador')) {
+
             setShowModalInfo(true);
             setShowModalDelete(false);
             setUserToDelete(null);
@@ -558,8 +686,8 @@ function GestionarUsuarios() {
         }
 
         try {
+            setButtonLoading(true);
             await UserService.deleteUser(userToDelete.id);
-
             // Actualizar la tabla removiendo el usuario eliminado
             setTableData(prevData => prevData.filter(user => user.id !== userToDelete.id));
 
@@ -572,9 +700,10 @@ function GestionarUsuarios() {
 
         } catch (error) {
             console.error('Error deleting user:', error);
+        } finally {
+            setButtonLoading(false);
         }
     };
-
     const confirmDelete = (user) => {
         setUserToDelete(user);
         setShowModalDelete(true);
@@ -582,149 +711,42 @@ function GestionarUsuarios() {
 
 
 
-    //------------------------------------------------------------------------------------
-    // Función de búsqueda simplificada como en GestionarClienteEmpresa
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    const handleSearchBlocks = (searchBlocks) => {
-        setSearchBlocks(searchBlocks);
-    };
-
 
 
     //------------------------------------------------------------------------------------
-    // Función de información del usuario
+    // Información del usuario
     const [showModalPerfilUsuario, setShowModalPerfilUsuario] = useState(false);
     const [userToShow, setUserToShow] = useState(null);
     const handleShowPerfilUsuario = async (user) => {
         try {
-            console.log("Obteniendo información del usuario:", user.id);
-
+            showLoaderText = "Cargando información del usuario...";
+            setShowLoader(true);
             // Obtener información completa del usuario desde la BD
             const userInfo = await UserService.getUserById(user.id);
 
-            if (userInfo) {
-                setUserToShow(userInfo);
-                setShowModalPerfilUsuario(true);
-                console.log("Información del usuario obtenida:", userInfo);
-            } else {
-                alert("No se pudo obtener la información del usuario");
-            }
+
+            setUserToShow(userInfo);
+            setShowModalPerfilUsuario(true);
         } catch (error) {
             console.error("Error al obtener información del usuario:", error);
-            alert("Error al obtener la información del usuario: " + error.message);
+        } finally {
+            setShowLoader(false);
         }
     };
 
 
+
+
+
     //------------------------------------------------------------------------------------
-    // Modal de desactivar usuario
+    // Info de desactivación
     const [showModalInfoDesactivo, setShowModalInfoDesactivo] = useState(false);
 
 
 
-    //------------------------------------------------------------------------------------
-    // Modal de información del usuario
-    const [showModalInfo, setShowModalInfo] = useState(false);
-    const [showModalExito, setShowModalExito] = useState(false);
-
-    const [showInfo, setShowInfo] = useState(false); // Estado para cada InfoBoton individual
-
-
-
-
-
-    const handleToggleStatus = (userId) => {
-        console.log("Cambiar estado del usuario:", userId);
-        setTableData(updatedData);
-    };
-
-    const tableRows = useMemo(() => {
-        return tableData.map((item, index) => [
-            index + 1, // Numeración secuencial 1, 2, 3...
-            item.nombre,
-            item.email,
-            item.rol,
-            <div
-                className={`${styles.statusColumn} ${styles[`status${item.estado}`]}`}
-                onClick={() => {
-                    if(item.estado === 'Inactivo'){
-                        setShowModalInfoDesactivo(true);
-                    }
-                }}
-            >
-                <span className={styles.statusDot}></span>
-                <span className={styles.statusText}>{item.estado}</span>
-            </div>,
-            item.bloqueado,
-            item.pais,
-            item.ciudad,
-            <div className={styles.actionsContainer}>
-                <span className={styles.defaultText}>...</span>
-                <div className={styles.actionButtons}>
-                    <ActionButtons
-                        tipo="gestionUsuarios"
-                        onInfo={() => handleShowPerfilUsuario(item)}
-                        onEdit={() => navigate(`/gestionar-usuarios/editar-usuario/${item.id}`)}
-                        onDelete={() => confirmDelete(item)}
-                    />
-                </div>
-                <div className={styles.menuPuntos}>
-                    <MenuPuntos
-                        opciones={[
-                            {
-                                label: 'Auditoria',
-                                icono: <FaSearch />,
-                                onClick: () => handleOpenAuditoria(item)
-                            },
-                            {
-                                label: 'Cambiar contraseña',
-                                icono: <FaKey />,
-                                onClick: () => {
-                                    setUserToChangePassword(item);
-                                    setShowModalContraseña(true);
-                                }
-                            },
-                            {
-                                label: item.estado === 'Activo' ? 'Desactivar' : 'Activar',
-                                icono: item.estado === 'Activo' ? <FaToggleOff /> : <FaToggleOn />,
-                                onClick: () => {
-                                    if (item.estado === 'Activo') {
-                                        setUserToDesactivar(item);
-                                        setShowModalDesactivar(true);
-                                    } else {
-                                        setUserToActivar(item);
-                                        setShowModalActivar(true);
-                                    }
-                                }
-                            },
-                            {
-                                label: 'Desbloquear',
-                                icono: <FaUnlock />,
-                                onClick: () => handleToggleStatus(item.id)
-                            }
-                        ]}
-                    />
-                </div>
-            </div>
-        ]);
-    }, [tableData]);
-
-    const tableRowsAuditoria = useMemo(() => {
-        return tableDataAuditoria.map(item => [
-            item.numero,
-            item.fecha,
-            item.evento,
-            item.hechoPor,
-            item.tabla,
-            item.detalleCambios,
-        ]);
-    }, [tableDataAuditoria]);
-
     return (
         <div className={styles.container}>
+            <Loader text={showLoaderText} show={showLoader} />
             <Nav />
             <Fondo />
             <div className={styles.content}>
@@ -750,21 +772,30 @@ function GestionarUsuarios() {
                 </div>
                 <Instruccion texto="Use el buscador para filtrar por nombre, email, rol, estado, pais, ciudad (presione doble espacio para agregar más filtros)" />
                 <div className={styles.tableContainer}>
-                    <Table
-                        headers={["Nº", "Nombre completo", "Email", "Rol", "Estado", "Bloqueado", "Pais", "Ciudad", "Acciones"]}
-                        data={tableRows}
-                        columnAlignments={[
-                            'center',    // Nº - Centrado
-                            'left',      // Nombre - Izquierda
-                            'left',      // Email - Izquierda  
-                            'center',    // Rol - Centrado
-                            'center',    // Estado - Centrado
-                            'center',    // Bloqueado - Centrado
-                            'center',      // Pais - Izquierda
-                            'center',      // Ciudad - Izquierda
-                            'center'     // Acciones - Centrado
-                        ]}
-                    />
+                    {loading && (
+                        <TableSkeleton
+                            columns={9}
+                            columnNames={["Nº", "Nombre completo", "Email", "Rol", "Estado", "Bloqueado", "Pais", "Ciudad", "Acciones"]}
+                            rows={6}
+                        />
+                    )}
+                    {!loading && (
+                        <Table
+                            headers={["Nº", "Nombre completo", "Email", "Rol", "Estado", "Bloqueado", "Pais", "Ciudad", "Acciones"]}
+                            data={tableRows}
+                            columnAlignments={[
+                                'center',    // Nº - Centrado
+                                'left',      // Nombre - Izquierda
+                                'left',      // Email - Izquierda  
+                                'center',    // Rol - Centrado
+                                'center',    // Estado - Centrado
+                                'center',    // Bloqueado - Centrado
+                                'center',      // Pais - Izquierda
+                                'center',      // Ciudad - Izquierda
+                                'center'     // Acciones - Centrado
+                            ]}
+                        />
+                    )}
                 </div>
             </div>
             {showModalDesactivar && (
@@ -818,11 +849,12 @@ function GestionarUsuarios() {
                                 setFormValues({ desactivarUsuario: "" });
                                 setErrors({ desactivarUsuario: "" });
                             },
-                            tipo: "grayButton",
-                            icon: <FaTimes />
+                            tipo: buttonLoading ? "disabledButton" : "grayButton",
+                            icon: <FaTimes />,
                         },
                         {
                             label: "Si, Desactivar",
+                            buttonLoading: buttonLoading,
                             onClick: () => {
                                 handleDesactivar();
                             },
@@ -843,6 +875,7 @@ function GestionarUsuarios() {
                         setErrors({ desactivarUsuario: "" });
                     }}
                     showCloseButton={true}
+                    showOverlay={buttonLoading}
                 />
             )}
             {showModalActivar && (
@@ -876,11 +909,12 @@ function GestionarUsuarios() {
                                 setFormValues({ activarUsuario: "" });
                                 setErrors({ activarUsuario: "" });
                             },
-                            tipo: "grayButton",
-                            icon: <FaTimes />
+                            tipo: buttonLoading ? "disabledButton" : "grayButton",
+                            icon: <FaTimes />,
                         },
                         {
                             label: "Si, Activar",
+                            buttonLoading: buttonLoading,
                             onClick: () => {
                                 handleActivar();
                             },
@@ -901,6 +935,7 @@ function GestionarUsuarios() {
                         setErrors({ activarUsuario: "" });
                     }}
                     showCloseButton={true}
+                    showOverlay={buttonLoading}
                 />
             )}
             {showModalContraseña && userToChangePassword && (
@@ -1071,6 +1106,8 @@ function GestionarUsuarios() {
                         setUserToDelete(null);
                     }}
                     onFinalizar={handleDelete}
+                    buttonLoading={buttonLoading}
+                    showOverlay={buttonLoading}
                 />
             )}
             {showModalInfoDesactivo && (

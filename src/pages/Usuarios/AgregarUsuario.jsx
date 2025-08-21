@@ -11,33 +11,35 @@ import Combobox from "../../components/common/Combobox";
 import Select from "../../components/common/Select";
 import CountryService from '../../services/countryService';
 import CityService from '../../services/cityService';
-import CheckBox from "../../components/common/CheckBox";
 import SingleCheckBox from "../../components/common/SingleCheckBox";
 import ModalExito from "../../components/ui/ModalExito";
 import Lista from "../../components/common/Lista";
+import Loader from "../../components/common/Loader";
 
 
 import PersonService from '../../services/personService';
 import RoleService from '../../services/roleService';
 import UserService from '../../services/userService';
 
+let showLoaderText = "";
+
 function AgregarUsuario() {
     const navigate = useNavigate();
-    const [currentStep, setCurrentStep] = useState(0);
-    const [completedSteps, setCompletedSteps] = useState([]);
     const [formValues, setFormValues] = useState({});
     const [errors, setErrors] = useState({});
+    const [showLoader, setShowLoader] = useState(false);
+
+
+    //----------------------------------------------------------------------------
+    // Estados de modales de exito y perfil de usuario
+    const [showModalError, setShowModalError] = useState(false);
+    const [showModalExito, setShowModalExito] = useState(false);
+    const [showModalPerfilUsuario, setShowModalPerfilUsuario] = useState(false);
 
 
 
     //----------------------------------------------------------------------------
-    // Modal de error
-    const [showModalError, setShowModalError] = useState(false);
-
-
-
-
-    // Función para cargar los países
+    // Países
     function country() {
         // Estados para países
         const [countries, setCountries] = useState([]);
@@ -51,6 +53,8 @@ function AgregarUsuario() {
         useEffect(() => {
             const loadCountries = async () => {
                 try {
+                    showLoaderText = "Cargando países...";
+                    setShowLoader(true);
                     setLoadingCountries(true);
                     setErrorCountries(null);
 
@@ -81,6 +85,7 @@ function AgregarUsuario() {
                     ]);
                 } finally {
                     setLoadingCountries(false);
+                    setShowLoader(false);
                 }
             };
 
@@ -98,7 +103,8 @@ function AgregarUsuario() {
     const { countries, loadingCountries, errorCountries, countryOptions } = country();
 
 
-    // Función para cargar las ciudades
+    //----------------------------------------------------------------------------
+    // Ciudades
     function city() {
         const [cities, setCities] = useState([]);
         const [loadingCities, setLoadingCities] = useState(false);
@@ -112,6 +118,8 @@ function AgregarUsuario() {
             }
 
             try {
+                showLoaderText = "Cargando ciudades...";
+                setShowLoader(true);
                 setLoadingCities(true);
                 setErrorCities(null);
 
@@ -125,6 +133,7 @@ function AgregarUsuario() {
             }
             finally {
                 setLoadingCities(false);
+                setShowLoader(false);
             }
         };
 
@@ -151,7 +160,8 @@ function AgregarUsuario() {
     const { cities, loadingCities, errorCities, loadCitiesByCountry, handleCountryChange } = city();
 
 
-    // Función para cargar los roles
+    //----------------------------------------------------------------------------
+    // Roles
     function role() {
         const [roles, setRoles] = useState([]);
         const [loadingRoles, setLoadingRoles] = useState(true);
@@ -189,6 +199,7 @@ function AgregarUsuario() {
     const { roles, loadingRoles, errorRoles } = role();
 
 
+    //----------------------------------------------------------------------------
     // Pasos del formulario
     const steps = [
         { id: 0, title: "Datos de usuario", icon: "1" },
@@ -196,7 +207,9 @@ function AgregarUsuario() {
         { id: 2, title: "Asignar roles", icon: "3" },
     ];
 
-    // Función para validar campos requeridos del paso actual
+    //----------------------------------------------------------------------------
+    // Validar campos requeridos del paso actual
+    const [completedSteps, setCompletedSteps] = useState([]);
     const validateCurrentStep = async () => {
         const newErrors = {};
 
@@ -224,6 +237,8 @@ function AgregarUsuario() {
                 // Verificar si el DNI ya existe en el sistema con el mismo país de emisión
                 if (formValues.dniCiUsuario && formValues.paisEmisionUsuario) {
                     try {
+                        showLoaderText = "Validando información...";
+                        setShowLoader(true);
                         const dniExists = await PersonService.checkDniExists(formValues.dniCiUsuario, formValues.paisEmisionUsuario);
                         if (dniExists) {
                             console.log('❌ El DNI/CI ya existe en el sistema con el mismo país de emisión:', formValues.dniCiUsuario, 'País:', formValues.paisEmisionUsuario);
@@ -233,6 +248,8 @@ function AgregarUsuario() {
                         }
                     } catch (error) {
                         console.error('❌ Error al verificar DNI:', error);
+                    } finally {
+                        setShowLoader(false);
                     }
                 }
                 
@@ -262,6 +279,8 @@ function AgregarUsuario() {
                         newErrors.correoElectronicoUsuario = "El correo electrónico no es válido.";
                     } else {
                         try {
+                            showLoaderText = "Validando información...";
+                            setShowLoader(true);
                             const emailExists = await PersonService.checkEmailExists(formValues.correoElectronicoUsuario);
                             if (emailExists) {
                                 console.log('❌ El correo electrónico ya existe en el sistema:', formValues.correoElectronicoUsuario);
@@ -271,6 +290,8 @@ function AgregarUsuario() {
                             }
                         } catch (error) {
                             console.error('❌ Error al verificar correo electrónico:', error);
+                        } finally {
+                            setShowLoader(false);
                         }
                     }
                 }
@@ -317,7 +338,8 @@ function AgregarUsuario() {
         return Object.keys(newErrors).length === 0; // Retorna true si no hay errores
     };
 
-    // Función para manejar los cambios en los campos
+    //----------------------------------------------------------------------------
+    // Cambios en los campos
     const handleFieldChange = (fieldName, value) => {
         setFormValues(prev => ({
             ...prev,
@@ -345,7 +367,10 @@ function AgregarUsuario() {
         }
     };
 
-    // Función para manejar el click en los pasos
+
+    //----------------------------------------------------------------------------
+    // Click en los pasos
+    const [currentStep, setCurrentStep] = useState(0);
     const handleStepClick = async (stepId) => {
         // Solo permitir navegar a pasos completados
         if (completedSteps.includes(stepId)) {
@@ -368,12 +393,16 @@ function AgregarUsuario() {
         }
     };
 
-    // Función para manejar el click en el botón de cancelar
+
+    //----------------------------------------------------------------------------
+    // Click en el botón de cancelar
     const handleCancel = () => {
         navigate('/gestionar-usuarios');
     };
 
-    // Función para manejar el click en el botón de continuar
+    
+    //----------------------------------------------------------------------------
+    // Click en el botón de continuar
     const handleContinue = async () => {
         // Validar campos del paso actual
         const isValid = await validateCurrentStep();
@@ -396,10 +425,8 @@ function AgregarUsuario() {
                 rolesAsignados[role.name] = formValues[role.code] || false;
             });
 
-            console.log('👥 ROLES ASIGNADOS (Paso 3):', rolesAsignados);
-            console.log('=== FIN FORMULARIO ===');
             try {
-                const loggedInUserId = localStorage.getItem('user').id || '00000000-0000-0000-0000-000000000001'; // fallback a UUID por defecto
+                const loggedInUserId = localStorage.getItem('user').id; // fallback a UUID por defecto
                 const userDataWithCreator = {
                     nombreUsuario: formValues.nombreUsuario,
                     apellidoUsuario: formValues.apellidoUsuario,
@@ -420,20 +447,21 @@ function AgregarUsuario() {
                     )
                 };
                 // Enviar datos al backend
+                showLoaderText = "Creando usuario...";
+                setShowLoader(true);
                 const response = await UserService.createUser(userDataWithCreator);
                 console.log('✅ Usuario creado:', response);
                 setShowModalExito(true);
             } catch (error) {
                 console.error('❌ Error al crear usuario:', error);
                 // Aquí podrías mostrar un modal de error
+            } finally {
+                setShowLoader(false);
             }
             setShowModalExito(true);
         }
     };
 
-
-    const [showModalExito, setShowModalExito] = useState(false);
-    const [showModalPerfilUsuario, setShowModalPerfilUsuario] = useState(false);
 
     return (
         <div className={styles.container}>
@@ -782,6 +810,7 @@ function AgregarUsuario() {
                     }}
                 />
             )}
+            <Loader text={showLoaderText} show={showLoader} />
         </div>
     )
 }
