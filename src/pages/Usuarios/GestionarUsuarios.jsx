@@ -179,7 +179,7 @@ function GestionarUsuarios() {
             <div
                 className={`${styles.statusColumn} ${styles[`status${item.estado}`]}`}
                 onClick={() => {
-                    if (item.estado === 'Inactivo') {
+                    if (item.estado === 'inactivo') {
                         setShowModalInfoDesactivo(true);
                     }
                 }}
@@ -217,10 +217,10 @@ function GestionarUsuarios() {
                                 }
                             },
                             {
-                                label: item.estado === 'Activo' ? 'Desactivar' : 'Activar',
-                                icono: item.estado === 'Activo' ? <FaToggleOff /> : <FaToggleOn />,
+                                label: item.estado === 'activo' ? 'Desactivar' : 'Activar',
+                                icono: item.estado === 'activo' ? <FaToggleOff /> : <FaToggleOn />,
                                 onClick: () => {
-                                    if (item.estado === 'Activo') {
+                                    if (item.estado === 'activo') {
                                         setUserToDesactivar(item);
                                         setShowModalDesactivar(true);
                                     } else {
@@ -378,7 +378,7 @@ function GestionarUsuarios() {
                 setTableData(prevData =>
                     prevData.map(user =>
                         user.id === userToDesactivar.id
-                            ? { ...user, estado: 'Inactivo' }  // Cambiar estado a Inactivo
+                            ? { ...user, estado: 'inactivo' }  // Cambiar estado a Inactivo
                             : user
                     )
                 );
@@ -411,7 +411,7 @@ function GestionarUsuarios() {
             setTableData(prevData =>
                 prevData.map(user =>
                     user.id === userToActivar.id
-                        ? { ...user, estado: 'Activo' }
+                        ? { ...user, estado: 'activo' }
                         : user
                 )
             );

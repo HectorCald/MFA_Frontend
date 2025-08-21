@@ -48,16 +48,12 @@ function EditarUsuario() {
         const loadUserInfo = async () => {
             if (id) {
                 try {
-                    console.log('🔄 Obteniendo información del usuario para editar:', id);
                     showLoaderText = "Cargando información del usuario...";
                     setShowLoader(true);
                     // Obtener información completa del usuario desde la BD
                     const userInfo = await UserService.getUserById(id);
                     
                     if (userInfo) {
-                        console.log('✅ Información del usuario obtenida para editar:', userInfo);
-                        console.log('🔍 USERINFO COMPLETO:', JSON.stringify(userInfo, null, 2));
-                        
                         // Guardar la información original del usuario para comparaciones
                         setOriginalUserInfo(userInfo);
                         
@@ -83,43 +79,29 @@ function EditarUsuario() {
                         };
                         
                         // Mapear los roles del usuario
-                        console.log('🔍 ROLES DEL USUARIO:', userInfo.roles);
-                        console.log('🔍 TIPO DE ROLES:', typeof userInfo.roles);
-                        
                         if (userInfo.roles && Array.isArray(userInfo.roles)) {
-                            console.log('📋 Mapeando roles desde array...');
                             userInfo.roles.forEach(role => {
-                                console.log('🔍 Role individual:', role);
                                 if (role.role_code) {
                                     mappedFormValues[role.role_code] = true;
-                                    console.log('✅ Rol marcado:', role.role_code);
                                 } else if (role.code) {
                                     mappedFormValues[role.code] = true;
-                                    console.log('✅ Rol marcado:', role.code);
                                 } else if (role.id) {
                                     mappedFormValues[role.id] = true;
-                                    console.log('✅ Rol marcado por ID:', role.id);
                                 }
                             });
                         }
                         // También verificar si hay roles en formato string
                         if (userInfo.roles && typeof userInfo.roles === 'string') {
-                            console.log('📋 Mapeando roles desde string...');
                             const rolesArray = userInfo.roles.split(',').map(r => r.trim());
-                            console.log('🔍 Roles array:', rolesArray);
                             rolesArray.forEach(roleCode => {
                                 if (roleCode) {
                                     mappedFormValues[roleCode] = true;
-                                    console.log('✅ Rol marcado desde string:', roleCode);
                                 }
                             });
                         }
-                        
-                        console.log('🔍 FORM VALUES FINAL:', mappedFormValues);
-                        
+
                         // Establecer los valores del formulario
                         setFormValues(mappedFormValues);
-                        console.log('🔍 FORM VALUES DESPUÉS DE SET:', mappedFormValues);
                         
                         // Cargar las ciudades del país de residencia si existe
                         if (userInfo.country_id) {
@@ -137,8 +119,7 @@ function EditarUsuario() {
                         
                         // Marcar todos los pasos como completados para permitir navegación libre
                         setCompletedSteps([0, 1, 2]);
-                        
-                        console.log('✅ Formulario llenado con datos del usuario:', mappedFormValues);
+
                         
                     } else {
                         console.log('❌ No se pudo obtener la información del usuario');
@@ -288,7 +269,6 @@ function EditarUsuario() {
                     setErrorRoles(null);
 
                     const rolesData = await RoleService.getAllRoles();
-                    console.log('🔍 ROLES CARGADOS DESDE SERVICIO:', rolesData);
                     // Filtrar solo roles activos
                     const activeRoles = rolesData.filter(role => role.is_active === true);
                     setRoles(activeRoles || []);
@@ -404,13 +384,10 @@ function EditarUsuario() {
                             setShowLoader(true);
                             const emailExists = await PersonService.checkEmailExists(formValues.correoElectronicoUsuario);
                             if (emailExists) {
-                                console.log('❌ El correo electrónico ya existe en el sistema:', formValues.correoElectronicoUsuario);
                                 newErrors.correoElectronicoUsuario = "El Usuario(Correo Electrónico) ya existe en el sistema.";
                             } else {
-                                console.log('✅ El correo electrónico está disponible:', formValues.correoElectronicoUsuario);
                             }
                         } catch (error) {
-                            console.error('❌ Error al verificar correo electrónico:', error);
                             } finally {
                                 setShowLoader(false);
                             }
@@ -575,10 +552,8 @@ function EditarUsuario() {
                 setShowLoader(true);
                 // Actualizar usuario en el backend
                 const response = await UserService.updateUser(id, userDataForUpdate);
-                console.log('✅ Usuario actualizado:', response);
                 setShowModalExito(true);
             } catch (error) {
-                console.error('❌ Error al actualizar usuario:', error);
                 // Aquí podrías mostrar un modal de error
             } finally {
                 setShowLoader(false);
@@ -773,11 +748,8 @@ function EditarUsuario() {
                                 </div>
                             ) : (
                                 <div className={styles.formItem}>
-                                    {console.log('🔍 FORM VALUES EN RENDERIZADO:', formValues)}
-                                    {console.log('🔍 ROLES EN RENDERIZADO:', roles)}
                                     {roles.map((role, index) => {
                                         const isChecked = formValues[role.code] || false;
-                                        console.log(`🔍 Role ${role.code}: checked=${isChecked}, formValues[${role.code}]=${formValues[role.code]}`);
                                         return (
                                         <SingleCheckBox
                                             key={role.code}

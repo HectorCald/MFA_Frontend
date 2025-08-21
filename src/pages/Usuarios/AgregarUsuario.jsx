@@ -450,7 +450,6 @@ function AgregarUsuario() {
                 showLoaderText = "Creando usuario...";
                 setShowLoader(true);
                 const response = await UserService.createUser(userDataWithCreator);
-                console.log('✅ Usuario creado:', response);
                 setShowModalExito(true);
             } catch (error) {
                 console.error('❌ Error al crear usuario:', error);

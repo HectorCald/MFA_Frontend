@@ -213,7 +213,7 @@ function GestionRolesPermisos() {
                     <MenuPuntos
                         opciones={[
                             {
-                                label: item.estado === 'Activo' ? 'Inactivar' : 'Activar',
+                                label: item.estado === 'Activo' ? 'Desactivar' : 'Activar',
                                 icono: item.estado === 'Activo' ? <FaToggleOff /> : <FaToggleOn />,
                                 onClick: () => {
                                     if (item.estado === 'Activo') {
@@ -255,7 +255,6 @@ function GestionRolesPermisos() {
 
         try {
             await RoleService.deleteRole(roleToDelete.id);
-            console.log("Rol eliminado exitosamente");
 
             // Cerrar modal y mostrar éxito
             setShowModalDelete(false);
@@ -335,7 +334,6 @@ function GestionRolesPermisos() {
 
             // Llamar al servicio para desactivar el rol
             await RoleService.toggleRoleStatus(roleToDesactivar.id, false, user.id);
-            console.log("Rol desactivado exitosamente");
 
             // Mostrar mensaje de éxito
             mensajeExito = `El rol "${roleToDesactivar.rol}" se desactivó correctamente`;
@@ -343,7 +341,13 @@ function GestionRolesPermisos() {
             setShowModalExito(true);
 
             // Recargar la tabla
-            loadRoles();
+            setTableData(prevData =>
+                prevData.map(role =>
+                    role.id === roleToDesactivar.id
+                        ? { ...role, estado: 'Inactivo' }  // Cambiar estado a Inactivo
+                        : role
+                )
+            );
 
             // Limpiar formulario y cerrar modal
             setFormValues({ desactivarRol: "" });
@@ -374,7 +378,6 @@ function GestionRolesPermisos() {
 
             // Llamar al servicio para activar el rol
             await RoleService.toggleRoleStatus(roleToActivar.id, true, user.id);
-            console.log("Rol activado exitosamente");
 
             // Mostrar mensaje de éxito
             mensajeExito = `El rol "${roleToActivar.rol}" se activó correctamente`;
@@ -382,7 +385,13 @@ function GestionRolesPermisos() {
             setShowModalExito(true);
 
             // Recargar la tabla
-            loadRoles();
+            setTableData(prevData =>
+                prevData.map(role =>
+                    role.id === roleToActivar.id
+                        ? { ...role, estado: 'Activo' }  // Cambiar estado a Inactivo
+                        : role
+                )
+            );
 
             // Limpiar y cerrar modal
             setRoleToActivar(null);
