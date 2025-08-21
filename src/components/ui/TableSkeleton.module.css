@@ -1,0 +1,129 @@
+/* Contenedor principal de la tabla */
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+    max-height: 50vh;
+}
+
+/* Tabla principal */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Header de la tabla */
+.tableHeader {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.tableHeader th {
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-right: 1px solid #e9ecef;
+}
+
+.tableHeader th:last-child {
+    border-right: none;
+}
+
+/* Cuerpo de la tabla */
+.tableBody {
+    background: white;
+}
+
+/* Filas del skeleton */
+.skeletonRow {
+    border-bottom: 1px solid #f1f3f4;
+    transition: background-color 0.2s ease;
+}
+
+.skeletonRow:hover {
+    background-color: #f8f9fa;
+}
+
+.skeletonRow:last-child {
+    border-bottom: none;
+}
+
+/* Celdas del skeleton */
+.skeletonCell {
+    padding: 16px 12px;
+    border-right: 1px solid #f1f3f4;
+    vertical-align: middle;
+}
+
+.skeletonCell:last-child {
+    border-right: none;
+}
+
+/* Elementos skeleton */
+.skeletonText {
+    height: 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeletonHeader .skeletonText {
+    height: 20px;
+    background: linear-gradient(90deg, #e9ecef 25%, #dee2e6 50%, #e9ecef 75%);
+    background-size: 200% 100%;
+}
+
+/* Animación de shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tableWrapper {
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tableHeader th,
+    .skeletonCell {
+        padding: 12px 8px;
+    }
+    
+    .skeletonText {
+        height: 14px;
+    }
+    
+    .skeletonHeader .skeletonText {
+        height: 18px;
+    }
+}
+
+/* Estados de carga */
+.skeletonRow:nth-child(odd) .skeletonText {
+    animation-delay: 0.1s;
+}
+
+.skeletonRow:nth-child(even) .skeletonText {
+    animation-delay: 0.2s;
+}
+
+.skeletonRow:nth-child(3n) .skeletonText {
+    animation-delay: 0.3s;
+}
+
+.skeletonRow:nth-child(4n) .skeletonText {
+    animation-delay: 0.4s;
+}

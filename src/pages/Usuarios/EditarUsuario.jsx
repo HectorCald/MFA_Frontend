@@ -15,26 +15,32 @@ import CheckBox from "../../components/common/CheckBox";
 import SingleCheckBox from "../../components/common/SingleCheckBox";
 import ModalExito from "../../components/ui/ModalExito";
 import Lista from "../../components/common/Lista";
+import Loader from "../../components/common/Loader";
 
 
 import PersonService from '../../services/personService';
 import RoleService from '../../services/roleService';
 import UserService from '../../services/userService';
 
+
+let showLoaderText = "";
+
 function EditarUsuario() {
     const navigate = useNavigate();
-    const { id } = useParams(); // Obtener el ID del usuario desde la URL
+    const { id } = useParams();
     const [currentStep, setCurrentStep] = useState(0);
     const [completedSteps, setCompletedSteps] = useState([]);
     const [formValues, setFormValues] = useState({});
     const [errors, setErrors] = useState({});
     const [originalUserInfo, setOriginalUserInfo] = useState(null); // Para almacenar la información original del usuario
-
+    const [showLoader, setShowLoader] = useState(false);
 
 
     //----------------------------------------------------------------------------
-    // Modal de error
+    // Estados de modales de exito y perfil de usuario
     const [showModalError, setShowModalError] = useState(false);
+    const [showModalExito, setShowModalExito] = useState(false);
+    const [showModalPerfilUsuario, setShowModalPerfilUsuario] = useState(false);
 
     //----------------------------------------------------------------------------
     // Obtener información del usuario al montar el componente
@@ -43,7 +49,8 @@ function EditarUsuario() {
             if (id) {
                 try {
                     console.log('🔄 Obteniendo información del usuario para editar:', id);
-                    
+                    showLoaderText = "Cargando información del usuario...";
+                    setShowLoader(true);
                     // Obtener información completa del usuario desde la BD
                     const userInfo = await UserService.getUserById(id);
                     
@@ -138,6 +145,8 @@ function EditarUsuario() {
                     }
                 } catch (error) {
                     console.error('❌ Error al obtener información del usuario para editar:', error);
+                } finally {
+                    setShowLoader(false);
                 }
             } else {
                 console.log('❌ No hay ID de usuario en la URL');
@@ -148,9 +157,8 @@ function EditarUsuario() {
     }, [id]);
 
 
-
-
-    // Función para cargar los países
+    //----------------------------------------------------------------------------
+    // Países
     function country() {
         // Estados para países
         const [countries, setCountries] = useState([]);
@@ -211,7 +219,8 @@ function EditarUsuario() {
     const { countries, loadingCountries, errorCountries, countryOptions } = country();
 
 
-    // Función para cargar las ciudades
+    //----------------------------------------------------------------------------
+    // Ciudades
     function city() {
         const [cities, setCities] = useState([]);
         const [loadingCities, setLoadingCities] = useState(false);
@@ -264,7 +273,8 @@ function EditarUsuario() {
     const { cities, loadingCities, errorCities, loadCitiesByCountry, handleCountryChange } = city();
 
 
-    // Función para cargar los roles
+    //----------------------------------------------------------------------------
+    // Roles
     function role() {
         const [roles, setRoles] = useState([]);
         const [loadingRoles, setLoadingRoles] = useState(true);
@@ -303,6 +313,7 @@ function EditarUsuario() {
     const { roles, loadingRoles, errorRoles } = role();
 
 
+    //----------------------------------------------------------------------------
     // Pasos del formulario
     const steps = [
         { id: 0, title: "Datos de usuario", icon: "1" },
@@ -310,7 +321,9 @@ function EditarUsuario() {
         { id: 2, title: "Asignar roles", icon: "3" },
     ];
 
-    // Función para validar campos requeridos del paso actual
+
+    //----------------------------------------------------------------------------
+    // Validar campos requeridos del paso actual
     const validateCurrentStep = async () => {
         const newErrors = {};
 
@@ -340,6 +353,8 @@ function EditarUsuario() {
                     // Solo validar si el DNI realmente cambió
                     if (formValues.dniCiUsuario !== originalUserInfo?.dni || formValues.paisEmisionUsuario !== originalUserInfo?.country_id) {
                     try {
+                        showLoaderText = "Validando información...";
+                        setShowLoader(true);
                         const dniExists = await PersonService.checkDniExists(formValues.dniCiUsuario, formValues.paisEmisionUsuario);
                         if (dniExists) {
                             console.log('❌ El DNI/CI ya existe en el sistema con el mismo país de emisión:', formValues.dniCiUsuario, 'País:', formValues.paisEmisionUsuario);
@@ -349,6 +364,8 @@ function EditarUsuario() {
                         }
                     } catch (error) {
                         console.error('❌ Error al verificar DNI:', error);
+                        } finally {
+                            setShowLoader(false);
                         }
                     } else {
                         console.log('✅ El DNI/CI no cambió, no es necesario validar duplicados');
@@ -383,6 +400,8 @@ function EditarUsuario() {
                         // Solo validar duplicados si el email realmente cambió
                         if (formValues.correoElectronicoUsuario !== originalUserInfo?.email) {
                         try {
+                            showLoaderText = "Validando información...";
+                            setShowLoader(true);
                             const emailExists = await PersonService.checkEmailExists(formValues.correoElectronicoUsuario);
                             if (emailExists) {
                                 console.log('❌ El correo electrónico ya existe en el sistema:', formValues.correoElectronicoUsuario);
@@ -392,6 +411,8 @@ function EditarUsuario() {
                             }
                         } catch (error) {
                             console.error('❌ Error al verificar correo electrónico:', error);
+                            } finally {
+                                setShowLoader(false);
                             }
                         } else {
                             console.log('✅ El email no cambió, no es necesario validar duplicados');
@@ -441,7 +462,9 @@ function EditarUsuario() {
         return Object.keys(newErrors).length === 0; // Retorna true si no hay errores
     };
 
-    // Función para manejar los cambios en los campos
+
+    //----------------------------------------------------------------------------
+    // Cambios en los campos
     const handleFieldChange = (fieldName, value) => {
         setFormValues(prev => ({
             ...prev,
@@ -469,7 +492,9 @@ function EditarUsuario() {
         }
     };
 
-    // Función para manejar el click en los pasos
+
+    //----------------------------------------------------------------------------
+    // Click en los pasos
     const handleStepClick = async (stepId) => {
         // Solo permitir navegar a pasos completados
         if (completedSteps.includes(stepId)) {
@@ -492,12 +517,16 @@ function EditarUsuario() {
         }
     };
 
-    // Función para manejar el click en el botón de cancelar
+
+    //----------------------------------------------------------------------------
+    // Click en el botón de cancelar
     const handleCancel = () => {
         navigate('/gestionar-usuarios');
     };
 
-    // Función para manejar el click en el botón de continuar
+
+    //----------------------------------------------------------------------------
+    // Click en el botón de continuar
     const handleContinue = async () => {
         // Validar campos del paso actual
         const isValid = await validateCurrentStep();
@@ -520,8 +549,7 @@ function EditarUsuario() {
                 rolesAsignados[role.name] = formValues[role.code] || false;
             });
 
-            console.log('👥 ROLES ASIGNADOS (Paso 3):', rolesAsignados);
-            console.log('=== ACTUALIZANDO USUARIO ===');
+        
             try {
                 const loggedInUserId = localStorage.getItem('user').id; // fallback a UUID por defecto
                 const userDataForUpdate = {
@@ -543,6 +571,8 @@ function EditarUsuario() {
                         roles.map(role => [`role_${role.code}`, formValues[role.code] || false])
                     )
                 };
+                showLoaderText = "Actualizando usuario...";
+                setShowLoader(true);
                 // Actualizar usuario en el backend
                 const response = await UserService.updateUser(id, userDataForUpdate);
                 console.log('✅ Usuario actualizado:', response);
@@ -550,13 +580,12 @@ function EditarUsuario() {
             } catch (error) {
                 console.error('❌ Error al actualizar usuario:', error);
                 // Aquí podrías mostrar un modal de error
+            } finally {
+                setShowLoader(false);
             }
         }
     };
 
-
-    const [showModalExito, setShowModalExito] = useState(false);
-    const [showModalPerfilUsuario, setShowModalPerfilUsuario] = useState(false);
 
     return (
         <div className={styles.container}>
@@ -911,6 +940,7 @@ function EditarUsuario() {
                     }}
                 />
             )}
+            <Loader text={showLoaderText} show={showLoader} />
         </div>
     )
 }

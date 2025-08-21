@@ -5,7 +5,6 @@ import InputSearch from "../../components/common/InputSearch";
 import Boton from "../../components/common/Boton";
 import { FaPlus, FaToggleOff, FaToggleOn, FaCheck, FaTimes, FaUser } from "react-icons/fa";
 import Table from "../../components/ui/Table";
-import { useNavigate } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import ActionButtons from "../../components/ui/ActionButtons";
 import MenuPuntos from "../../components/common/MenuPuntos";
@@ -17,48 +16,13 @@ import Switch from "../../components/common/Switch";
 import SingleCheckBox from "../../components/common/SingleCheckBox";
 import Input from "../../components/common/Input";
 import Instruccion from "../../components/common/Instruccion";
+import TableSkeleton from "../../components/ui/TableSkeleton";
+
 
 import RoleService from "../../services/roleService";
 import PermissionService from "../../services/permissionService";
 
 
-const mockData = [
-    {
-        id: 1,
-        rol: "Administrador",
-        codigo: "1234567890",
-        estado: "Activo",
-        acciones: ["editar", "eliminar"]
-    },
-    {
-        id: 2,
-        rol: "Gerente",
-        codigo: "1234567890",
-        estado: "Activo",
-        acciones: ["editar", "eliminar"]
-    },
-    {
-        id: 3,
-        rol: "Supervisor",
-        codigo: "1234567890",
-        estado: "Inactivo",
-        acciones: ["editar", "eliminar"]
-    },
-    {
-        id: 4,
-        rol: "Empleado",
-        codigo: "1234567890",
-        estado: "Inactivo",
-        acciones: ["editar", "eliminar"]
-    },
-    {
-        id: 5,
-        rol: "Empleado",
-        codigo: "1234567890",
-        estado: "Activo",
-        acciones: ["editar", "eliminar"]
-    }
-];
 const motivosDesactivar = [
     "Cambio de cargo",
     "Cambio de empresa",
@@ -78,15 +42,26 @@ let mensajeInfo = "";
 let tituloInfo = "";
 
 function GestionRolesPermisos() {
-    const navigate = useNavigate();
+    //------------------------------------------------------------------------------------
+    // Estados de modales de exito y info
+    const [showModalExito, setShowModalExito] = useState(false);
+    const [showModalInfo, setShowModalInfo] = useState(false);
+    // Estados de carga y botones
+    const [loading, setLoading] = useState(true);
+
+    //------------------------------------------------------------------------------------
+    // Búsqueda
     const [searchTerm, setSearchTerm] = useState("");
     const [tableData, setTableData] = useState([]);
-    const [permissions, setPermissions] = useState([]);
     const [openModule, setOpenModule] = useState(null);
 
 
+
+
+
     //------------------------------------------------------------------------------------
-    // Cargar permisos desde el backend
+    // Permisos
+    const [permissions, setPermissions] = useState([]);
     const loadPermissions = async () => {
         try {
             const permissionsData = await PermissionService.getAllPermissions();
@@ -122,10 +97,15 @@ function GestionRolesPermisos() {
         }
     };
 
+
+
+
+
     //------------------------------------------------------------------------------------
-    // Cargar roles desde el backend
+    // Roles
     const loadRoles = async () => {
         try {
+            setLoading(true);
             const rolesData = await RoleService.getAllRoles();
             const formattedRoles = rolesData.map(role => ({
                 id: role.id,
@@ -138,16 +118,22 @@ function GestionRolesPermisos() {
         } catch (error) {
             console.error('Error al cargar roles:', error);
             setTableData(mockData); // Fallback a datos mock
+        } finally {
+            setLoading(false);
         }
     };
-
     useEffect(() => {
         loadRoles();
         loadPermissions();
     }, []);
 
+
+
+
+
+
     //------------------------------------------------------------------------------------
-    // Función de búsqueda
+    // Búsqueda
     const handleSearch = (value) => {
         setSearchTerm(value);
         if (value.trim() === "") {
@@ -162,7 +148,6 @@ function GestionRolesPermisos() {
             setTableData(filteredData);
         }
     };
-
     const handleSearchBlocks = (searchBlocks) => {
         // Evitar llamadas repetidas con el mismo contenido
         const current = JSON.stringify(searchBlocks || []);
@@ -248,11 +233,14 @@ function GestionRolesPermisos() {
     }, [tableData]);
 
 
+
+
+
+
     //------------------------------------------------------------------------------------
-    // Función para eliminar rol
+    // Eliminar rol
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [roleToDelete, setRoleToDelete] = useState(null);
-
     const handleDelete = async () => {
         if (!roleToDelete) return;
 
@@ -287,18 +275,11 @@ function GestionRolesPermisos() {
     }
 
 
-    //------------------------------------------------------------------------------------
-    // modal exito
-    const [showModalExito, setShowModalExito] = useState(false);
-    //------------------------------------------------------------------------------------
-    // modal info
-    const [showModalInfo, setShowModalInfo] = useState(false);
-
 
 
 
     //------------------------------------------------------------------------------------
-    // Función para agregar rol
+    // Desactivar rol
     const [showModalDesactivar, setShowModalDesactivar] = useState(false);
     const [roleToDesactivar, setRoleToDesactivar] = useState(null);
     const [errors, setErrors] = useState({
@@ -307,7 +288,6 @@ function GestionRolesPermisos() {
     const [formValues, setFormValues] = useState({
         desactivarRol: ""
     });
-    // Función para desactivar rol
     const handleDesactivar = async () => {
         if (!formValues.desactivarRol || formValues.desactivarRol.trim() === '') {
             setErrors({
@@ -379,8 +359,10 @@ function GestionRolesPermisos() {
 
 
 
+
+
     //------------------------------------------------------------------------------------
-    // Función para activar rol
+    // Activar rol
     const [showModalActivar, setShowModalActivar] = useState(false);
     const [roleToActivar, setRoleToActivar] = useState(null);
     const handleActivar = async () => {
@@ -414,13 +396,10 @@ function GestionRolesPermisos() {
 
 
 
-    //------------------------------------------------------------------------------------
-    // Función para activar y desactivar rol
-    const [isActive, setIsActive] = useState(false);
 
 
     //------------------------------------------------------------------------------------
-    // Función para editar rol
+    // Editar rol
     const [showModalEditarRol, setShowModalEditarRol] = useState(false);
     const [roleToEdit, setRoleToEdit] = useState(null);
     const [formValuesEditarRol, setFormValuesEditarRol] = useState({
@@ -433,7 +412,6 @@ function GestionRolesPermisos() {
     });
     const [isActiveRolEditar, setIsActiveRolEditar] = useState(true);
     const [selectedPermissionsEditar, setSelectedPermissionsEditar] = useState([]);
-
     const handleShowEditarRol = async (role) => {
         try {
             console.log("Obteniendo información del rol para editar:", role.id);
@@ -471,7 +449,6 @@ function GestionRolesPermisos() {
             alert("Error al obtener la información del rol: " + error.message);
         }
     };
-
     const handleEditarRol = async () => {
         const inputElement = document.getElementById("nombreRolEditar");
         const inputElementCodigo = document.getElementById("codigoRolEditar");
@@ -603,8 +580,11 @@ function GestionRolesPermisos() {
     }
 
 
+
+
+
     //------------------------------------------------------------------------------------
-    // Función para manejar el toggle de las listas desplegables
+    // Toggle de las listas desplegables
     const handleModuleToggle = (moduleName) => {
         if (openModule === moduleName) {
             // Si la misma lista está abierta, la cerramos
@@ -614,9 +594,8 @@ function GestionRolesPermisos() {
             setOpenModule(moduleName);
         }
     };
-
     //------------------------------------------------------------------------------------
-    // Función para generar código automático del rol
+    // Generar código automático del rol
     const generateRoleCode = (roleName) => {
         if (!roleName) return '';
 
@@ -639,12 +618,10 @@ function GestionRolesPermisos() {
 
 
 
+
     //------------------------------------------------------------------------------------
-    // Función para pemisos
-
+    // Permisos
     const [selectedPermissions, setSelectedPermissions] = useState([]);
-
-    // Función para manejar la selección de permisos
     const handlePermissionChange = (permissionId, isChecked) => {
         if (isChecked) {
             setSelectedPermissions(prev => [...prev, permissionId]);
@@ -652,6 +629,10 @@ function GestionRolesPermisos() {
             setSelectedPermissions(prev => prev.filter(id => id !== permissionId));
         }
     };
+
+
+
+
 
     //------------------------------------------------------------------------------------
     // Modal de información del rol
@@ -677,8 +658,12 @@ function GestionRolesPermisos() {
         }
     };
 
+
+
+
+
     //------------------------------------------------------------------------------------
-    // Función para agregar rol
+    // Agregar rol
     const [showModalAgregarRol, setShowModalAgregarRol] = useState(false);
     const [isActiveRol, setIsActiveRol] = useState(true);
     const [errorsAgregarRol, setErrorsAgregarRol] = useState({
@@ -820,7 +805,7 @@ function GestionRolesPermisos() {
         }
     }
 
-    //------------------------------------------------------------------------------------
+
     return (
         <div className={styles.container}>
             <Nav />
@@ -846,10 +831,19 @@ function GestionRolesPermisos() {
                 </div>
                 <Instruccion texto="Use el buscador para filtrar por nombre, codigo, estado...presione doble espacio para agregar más filtros" />
                 <div className={styles.tableContainer}>
-                    <Table
-                        headers={["Nº", "Rol", "Codigo", "Estado", "Acciones"]}
-                        data={tableRows}
-                    />
+                    {loading && (
+                        <TableSkeleton
+                            columns={5}
+                            columnNames={["Nº", "Rol", "Codigo", "Estado", "Acciones"]}
+                            rows={6}
+                        />
+                    )}
+                    {!loading && (
+                        <Table
+                            headers={["Nº", "Rol", "Codigo", "Estado", "Acciones"]}
+                            data={tableRows}
+                        />
+                    )}
                 </div>
             </div>
             {showModalDelete && (

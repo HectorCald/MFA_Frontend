@@ -1,14 +1,7 @@
 // Usar la URL de la API desde las variables de entorno
-// En desarrollo: http://localhost:3000/api
+const API_BASE_URL = 'http://localhost:3000/api';
 // En producción: https://mfa-backend-gsr7.onrender.com/api
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
-// Log para verificar la configuración
-console.log('🔧 API Service configurado con URL:', API_BASE_URL);
-console.log('🔧 Variables de entorno disponibles:', {
-    VITE_API_URL: import.meta.env.VITE_API_URL,
-    NODE_ENV: import.meta.env.NODE_ENV
-});
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 class ApiService {
     /**

@@ -1,13 +1,14 @@
 import styles from "./ModalExito.module.css";
 import Boton from "../common/Boton";
 import { FaCheck, FaTimes, FaExclamationTriangle, FaInfoCircle, FaExclamationCircle, FaPlus, FaTrash } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
-function ModalExito({ 
-    clienteEmpresa, 
-    oficinaPrincipal, 
-    tipoGestionPagos, 
-    onClose, 
-    onAgregarOficina, 
+function ModalExito({
+    clienteEmpresa,
+    oficinaPrincipal,
+    tipoGestionPagos,
+    onClose,
+    onAgregarOficina,
     onFinalizar,
     type = "success",
     title,
@@ -27,6 +28,8 @@ function ModalExito({
     modalClassName,
     styleCustom,
     customColor,
+    buttonLoading = false,
+    showOverlay = false,
 }) {
     // Configuración según el tipo de modal
     const getModalConfig = () => {
@@ -118,6 +121,7 @@ function ModalExito({
                         disabled={false}
                         tipo="blueButton"
                         icon={<FaPlus />}
+                        style={{ display: buttonLoading ? 'none' : 'block' }}
                     />
                     <Boton
                         label="Finalizar"
@@ -126,6 +130,7 @@ function ModalExito({
                         disabled={false}
                         tipo="greenButton"
                         icon={<FaCheck />}
+                        loading={buttonLoading}
                     />
                 </div>
             );
@@ -164,6 +169,7 @@ function ModalExito({
                         disabled={false}
                         tipo="grayButton"
                         icon={<FaTimes />}
+                        style={buttonLoading ? 'disabledButton' : ''}
                     />
                     <Boton
                         label="Si, Eliminar"
@@ -172,6 +178,7 @@ function ModalExito({
                         disabled={false}
                         tipo="redButton"
                         icon={<FaTrash />}
+                        loading={buttonLoading}
                     />
                 </div>
             );
@@ -241,10 +248,9 @@ function ModalExito({
                                 label={button.label}
                                 onClick={button.onClick}
                                 type="button"
-                                disabled={button.disabled || false}
-                                tipo={button.tipo || "blueButton"}
+                                tipo={button.tipo}
                                 icon={button.icon}
-                                className={button.className}
+                                loading={button.buttonLoading}
                             />
                         ))}
                     </div>
@@ -254,15 +260,19 @@ function ModalExito({
         return null;
     };
 
+
     return (
+
         <div className={styles.modalExitoContainer}>
+
             <div className={`${styles.modalExitoContent} ${styles.modalExitoShow} ${config.className}`} style={styleCustom}>
+                <div className={styles.overlayModal} style={{ display: showOverlay ? 'block' : 'none' }}></div>
                 <div className={styles.modalExitoIcon} style={config.customColor ? { color: config.customColor } : {}}>
                     <IconComponent size={24} />
                 </div>
                 <h2 className={styles.modalExitoTitle} style={config.customColor ? { color: config.customColor } : {}}>{config.title}</h2>
                 <p className={styles.modalExitoText} style={config.customColor ? { color: config.customColor } : {}}>{config.message}</p>
-                
+
                 {/* Mostrar detalles adicionales del error si están disponibles */}
                 {type === "error" && errorDetails && (
                     <div className={styles.modalErrorDetails}>
@@ -286,46 +296,46 @@ function ModalExito({
                         )}
                     </div>
                 )}
-                
+
                 {/* Solo mostrar la lista si es tipo success */}
                 {type === "success" && (
                     <ul className={styles.modalExitoList}>
                         <li>
-                            <FaCheck className={styles.modalExitoIconList} /> 
+                            <FaCheck className={styles.modalExitoIconList} />
                             Cliente Empresa: <span>{clienteEmpresa?.nombreEmpresa || 'N/A'}</span>
                         </li>
                         <li>
-                            <FaCheck className={styles.modalExitoIconList} /> 
+                            <FaCheck className={styles.modalExitoIconList} />
                             Oficina Principal: <span>{oficinaPrincipal?.nombreOficina || 'N/A'}</span>
                         </li>
                         <li>
-                            <FaCheck className={styles.modalExitoIconList} /> 
+                            <FaCheck className={styles.modalExitoIconList} />
                             Tipo de gestión de pagos: <span>{tipoGestionPagos?.pagoSeleccionado === 'centralizado' ? 'Centralizado' : 'No Centralizado'}</span>
                         </li>
                     </ul>
                 )}
-                
+
                 {type === "success" && (
                     <p className={styles.modalExitoText}>¿Desea agregar otra oficina?</p>
                 )}
-                
+
                 {/* Contenido adicional personalizable */}
                 {(type === "completamente-personalizable" || type === "personalizar") && additionalContent && (
                     <div className={styles.modalAdditionalContent}>
                         {additionalContent}
                     </div>
                 )}
-                
+
                 {/* Contenido extra personalizable */}
                 {(type === "completamente-personalizable" || type === "personalizar") && extraContent && (
                     <div className={styles.modalExtraContent}>
                         {extraContent}
                     </div>
                 )}
-                
+
                 {/* Renderizar botones */}
                 {showButtons && (renderCustomButtons() || renderDefaultButtons())}
-                
+
                 {/* Botón de cerrar opcional */}
                 {showCloseButton && (
                     <Boton
